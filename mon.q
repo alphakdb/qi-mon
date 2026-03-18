@@ -6,8 +6,8 @@
 .mon.record:insert
 .mon.getsize:{[p] $[.qi.exists p;hcount p;0]}
 
-.mon.follow:{[p] `.mon.t upsert `time`sym`status`size!(.z.p;p;`following;.mon.getsize p);}
-.mon.pause:{[p] update status:`paused from`.mon.t where sym=p;}
+.mon.follow:{[st;p] `.mon.t upsert `time`sym`stackname`status`size!(.z.p;p;st;`following;.mon.getsize p);}
+.mon.pause:{[st;p] update status:`paused from`.mon.t where stackname=st,sym=p;}
 
 .mon.monitor:{
   if[not count a:select from .mon.t where status=`following;:()];
@@ -15,7 +15,7 @@
   $[count a:select from a where size<>nsize;now:.z.p;:()];
   `.mon.t upsert delete nsize from update time:now,size:nsize from a;
   a:update jump:.conf.MON_MAX_LOG_CHUNK&nsize-size from a;
-  r:get flip ungroup select time:now,sym,lines:{read0(x;y;z)}'[sym;nsize-jump;jump]from a;
+  r:get flip ungroup select time:now,sym,stackname,lines:{read0(x;y;z)}'[sym;nsize-jump;jump]from a;
   .mon.record[`MonText;r];
   }
 
