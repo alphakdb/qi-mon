@@ -18,12 +18,3 @@
   r:get flip ungroup select time:now,sym,stackname,lines:{read0(x;y;z)}'[sym;nsize-jump;jump]from a;
   .mon.record[`MonText;r];
   }
-
-/ 
-startstop:{[status;p]
-  if[null(e:MonRegistry p)`status;'.qi.tostr[p]," not found in MonRegistry"];
-  `MonRegistry[p]:@[e;`status;:;status];
-  }
-
-pausefollow:startstop`following
-stop:startstop`stopped
